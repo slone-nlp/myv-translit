@@ -1,5 +1,5 @@
 import re
-
+from collections import Counter
 
 _cyr2lat = [
     {'find_what': 'А', 'replacer': 'A', 're': False},
@@ -265,3 +265,38 @@ def cyr2lat(text, joint_acute=True, first_e_with_hacek=True, soft_l_after_vowels
 def lat2cyr(text, joint_acute=True, first_e_with_hacek=True, soft_l_after_vowels=True):
     # todo: support all the optional settings
     return transliterate_with_rules(text, _lat2cyr)
+
+
+CYR_CHARS = 'абвгдеёжзиклмнопрстуфхцчшщъыьэюя'
+BASIC_LAT_CHARS = 'abcdefghijklmnopqrtuvwxyz'
+ACCENT_LAT_CHARS = 'ěäüöśźćńŕťďĺ'
+LAT_CHARS = BASIC_LAT_CHARS + ACCENT_LAT_CHARS
+
+
+def detect_script(text: str, min_prevalence: float = 2.0, min_detectable: float = 0.1) -> str:
+    """ Detect the script of the text.
+    Possible values:
+        - cyr - Cyrillic
+        - lat - Latin
+        - mix - Mixed Cyrillic and Latin script
+        - unk - Unknown script (probably neither Latin nor Cyrillic)
+    """
+    cyr, lat, other = 0, 0, 0
+    char_cnt = Counter(text.lower())
+    for char, cnt in char_cnt.items():
+        if char in CYR_CHARS:
+            cyr += cnt
+        elif char in LAT_CHARS:
+            lat += cnt
+        else:
+            other += cnt
+    total = cyr + lat + other
+    if not total:
+        return 'unk'
+    if (cyr + lat) / total < min_detectable:
+        return 'unk'
+    if cyr >= lat * min_prevalence:
+        return 'cyr'
+    if lat >= cyr * min_prevalence:
+        return 'lat'
+    return 'mix'
