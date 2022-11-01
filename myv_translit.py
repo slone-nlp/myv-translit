@@ -252,7 +252,6 @@ def transliterate_with_rules(text, rules):
 
 
 def cyr2lat(text, joint_acute=True, first_e_with_hacek=True, soft_l_after_vowels=True):
-    # todo: support all the optional settings
     text = transliterate_with_rules(text, _cyr2lat)
     if joint_acute:
         text = transliterate_with_rules(text, _cyr2lat_joint_acutes)

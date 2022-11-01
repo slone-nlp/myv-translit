@@ -27,8 +27,8 @@ directions = ['lat -> кир', 'кир -> lat']
 interface = gr.Interface(
     transliterator,
     [
-        gr.Textbox(label="Text", lines=2, placeholder='text to transliterate'),
-        gr.Radio(choices=directions, type="index", interactive=True, value=directions[0]),
+        gr.Textbox(label="Текст", lines=2, placeholder='text to transliterate'),
+        gr.Radio(choices=directions, type="index", interactive=True, label='Направление'),
         gr.Checkbox(value=True, label='L + ́  -> Ĺ'),
         gr.Checkbox(value=False, label='ěrzä -> erzä'),
         gr.Checkbox(value=False, label='peĺks -> pelks'),
