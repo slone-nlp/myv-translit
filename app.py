@@ -14,7 +14,7 @@ def transliterator(input_text, direction_to_latn=1, joint_acute=True, not_first_
 
 
 article = """
-Это автоматический транслитератор между кириллицей и латиницей для эрянского языка.
+Это автоматический транслитератор между кириллицей и латиницей для эрзянского языка.
 
 В основе - алгоритм Михаила Потапова:
 - https://github.com/potapoff271083/automatic_translation_latin_to_cyrillic
@@ -34,7 +34,7 @@ interface = gr.Interface(
         gr.Checkbox(value=False, label='peĺks -> pelks'),
     ],
     "text",
-    title='Эрзянь транслитератор',
+    title='Эрзянь транслитератор <-> Ěrzäń transliterator',
     article=article,
 )
 

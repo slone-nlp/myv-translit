@@ -1,5 +1,5 @@
 ---
-title: Erzya Translit
+title: Эрзянь транслитератор <-> Ěrzäń transliterator
 emoji: 📈
 colorFrom: gray
 colorTo: green
