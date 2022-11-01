@@ -1,5 +1,5 @@
 ---
-title: Myv Translit
+title: Erzya Translit
 emoji: 📈
 colorFrom: gray
 colorTo: green
