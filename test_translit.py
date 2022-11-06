@@ -1,4 +1,4 @@
-from myv_translit import cyr2lat, detect_script
+from myv_translit import cyr2lat, lat2cyr, detect_script
 
 
 def test_join_acute():
@@ -27,6 +27,17 @@ def test_detection():
     assert detect_script('ěrzä эрзянь') == 'mix'
 
 
-# todo: test on a larger corpus
-# todo: test cyclical consistency
+def test_lat2cyr_edge_cases():
+    assert lat2cyr('bažaś velävtoms dy muems ěstenzě jon tarka') == 'бажась велявтомс ды муемс эстензэ ён тарка'
+
+
+def test_consistency():
+    with open('examples/zontik_cyr.txt', 'r') as f:
+        lines = [line.strip() for line in f.readlines()]
+    lines = [line for line in lines if line]
+    assert len(lines) > 40
+    for line_cyr in lines:
+        line_lat = cyr2lat(line_cyr)
+        line_cyr2 = lat2cyr(line_lat)
+        assert line_cyr == line_cyr2
 

@@ -234,8 +234,8 @@ _lat2cyr = [
     # ya, yo, yu
     {'find_what': 'Й[Аа]', 'replacer': 'Я', 're': True},
     {'find_what': 'й[Аа]', 'replacer': 'я', 're': True},
-    {'find_what': 'Й[Ее]', 'replacer': 'Ё', 're': True},
-    {'find_what': 'й[Ее]', 'replacer': 'ё', 're': True},
+    {'find_what': 'Й[Оо]', 'replacer': 'Ё', 're': True},
+    {'find_what': 'й[Оо]', 'replacer': 'ё', 're': True},
     {'find_what': 'Й[Уу]', 'replacer': 'Ю', 're': True},
     {'find_what': 'й[Уу]', 'replacer': 'ю', 're': True},
     # todo: introduce Ъ when appropriate
