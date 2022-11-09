@@ -24,6 +24,8 @@ article = """
 В основе - алгоритм Михаила Потапова:
 - https://github.com/potapoff271083/automatic_translation_latin_to_cyrillic
 - http://valks.erzja.info/2020/04/30/эрзянский-алфавит/
+
+Исходный код и обратная связь: https://github.com/slone-nlp/myv-translit
 """
 
 
