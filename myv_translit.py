@@ -140,8 +140,8 @@ _cyr2lat_first_e = [
 
 _cyr2lat_soft_l_after_vowels = [
     # joint acutes | disjoint acutes
-    {'find_what': '([yiěeYIĚE])(Ĺ|Ĺ)', 'replacer': '\\1L', 're': True},
-    {'find_what': '([yiěeYIĚE])(ĺ|ĺ)', 'replacer': '\\1l', 're': True},
+    {'find_what': '([iěeIĚE])(Ĺ|Ĺ)', 'replacer': '\\1L', 're': True},
+    {'find_what': '([iěeIĚE])(ĺ|ĺ)', 'replacer': '\\1l', 're': True},
 ]
 
 _lat2cyr = [
