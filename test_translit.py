@@ -27,8 +27,20 @@ def test_detection():
     assert detect_script('ěrzä эрзянь') == 'mix'
 
 
-def test_lat2cyr_edge_cases():
-    assert lat2cyr('bažaś velävtoms dy muems ěstenzě jon tarka') == 'бажась велявтомс ды муемс эстензэ ён тарка'
+DEFAULT_TEST_SET = [
+    ("съёмка", "sjomka"),  # ъё
+    ('бажась велявтомс ды муемс эстензэ ён тарка', 'bažaś velävtoms dy muems ěstenzě jon tarka'),
+    ('УЖОСТО УЖОС ИДЕМЕВСТЬ ПАНСЯН!', 'UŽOSTO UŽOS IDEMEVSŤ PANSÄN!'),  # upper Ь
+    ('ПЬЯНСТВО', 'ṔJANSTVO'),  # also upper Ь
+    ('райононть', 'rajononť'),  # special case
+    # TODO: FIXME ('XVIII пингень', 'XVIII pingeń'),  # consistency
+]
+
+
+def test_edge_cases():
+    for cyr, lat in DEFAULT_TEST_SET:
+        assert cyr2lat(cyr) == lat
+        assert lat2cyr(lat) == cyr
 
 
 def test_consistency():
@@ -41,3 +53,32 @@ def test_consistency():
         line_cyr2 = lat2cyr(line_lat)
         assert line_cyr == line_cyr2
 
+
+def test_zontik():
+    with open('examples/zontik_cyr.txt', 'r') as f:
+        lines_cyr = [line.strip() for line in f.readlines()]
+    lines_cyr = [line for line in lines_cyr if line]
+    with open('examples/zontik_lat.txt', 'r') as f:
+        lines_lat = [line.strip() for line in f.readlines()]
+    lines_lat = [line for line in lines_lat if line]
+    assert len(lines_cyr) == len(lines_lat)
+    for line_cyr, line_lat in zip(lines_cyr, lines_lat):
+        assert line_lat == cyr2lat(line_cyr)
+        assert line_cyr == lat2cyr(line_lat)
+
+
+def get_inconsistent_pairs():
+    try:
+        from datasets import load_dataset
+    except ImportError:
+        return
+    dev = load_dataset('slone/myv_ru_2022', split='validation')
+    with open('examples/mismatches.txt', 'w') as f:
+        for line_cyr in dev['myv']:
+            line_lat = cyr2lat(line_cyr)
+            line_cyr2 = lat2cyr(line_lat)
+            if line_cyr != line_cyr2:
+                print(line_cyr, file=f)
+                print(line_cyr2, file=f)
+                print(line_lat, file=f)
+                print(file=f)

@@ -1,7 +1,27 @@
 import re
 from collections import Counter
 
+
+CYR_CHARS = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'
+BASIC_LAT_CHARS = 'abcdefghijklmnopqrtuvwxyz'
+ACCENT_LAT_CHARS = 'ěäüöśźćńŕťďĺ'
+LAT_CHARS = BASIC_LAT_CHARS + ACCENT_LAT_CHARS
+
+CYR_CONSONANTS_LOWER_HARD = 'бвгдзклмнпрстфх'
+CYR_CONSONANTS_UPPER_HARD = 'БВГДЗКЛМНПРСТФХ'
+CYR_CONSONANTS_HARD = CYR_CONSONANTS_LOWER_HARD + CYR_CONSONANTS_UPPER_HARD
+
+
 _cyr2lat = [
+    {'find_what': 'ъё', 'replacer': 'jo', 're': False},
+    {'find_what': 'ъю', 'replacer': 'ju', 're': False},
+    {'find_what': 'ъя', 'replacer': 'ja', 're': False},
+    {'find_what': 'ъе', 'replacer': 'je', 're': False},
+    {'find_what': 'ЪЁ', 'replacer': 'JO', 're': False},
+    {'find_what': 'ЪЮ', 'replacer': 'JU', 're': False},
+    {'find_what': 'ЪЯ', 'replacer': 'JA', 're': False},
+    {'find_what': 'ЪЕ', 'replacer': 'JE', 're': False},
+
     {'find_what': 'А', 'replacer': 'A', 're': False},
     {'find_what': 'а', 'replacer': 'a', 're': False},
     {'find_what': 'О', 'replacer': 'O', 're': False},
@@ -231,6 +251,18 @@ _lat2cyr = [
     {'find_what': 'O', 'replacer': 'О', 're': False},
     {'find_what': 'a', 'replacer': 'а', 're': False},
     {'find_what': 'A', 'replacer': 'А', 're': False},
+    # make the soft sign upper in an uppercase word
+    {'find_what': '([А-ЯЁ]{2,})ь', 'replacer': '\\1Ь', 're': True},
+    {'find_what': '([А-ЯЁ])ь([А-ЯЁ])', 'replacer': '\\1Ь\\2', 're': True},
+    # introduce Ъ when appropriate
+    {'find_what': f'([{CYR_CONSONANTS_HARD}])Й[Аа]', 'replacer': '\\1ЪЯ', 're': True},
+    {'find_what': f'([{CYR_CONSONANTS_HARD}])й[Аа]', 'replacer': '\\1ъя', 're': True},
+    {'find_what': f'([{CYR_CONSONANTS_HARD}])Й[Оо]', 'replacer': '\\1ЪЁ', 're': True},
+    {'find_what': f'([{CYR_CONSONANTS_HARD}])й[Оо]', 'replacer': '\\1ъё', 're': True},
+    {'find_what': f'([{CYR_CONSONANTS_HARD}])Й[Уу]', 'replacer': '\\1ЪЮ', 're': True},
+    {'find_what': f'([{CYR_CONSONANTS_HARD}])й[Уу]', 'replacer': '\\1ъю', 're': True},
+    {'find_what': f'([{CYR_CONSONANTS_HARD}])Й[Ee]', 'replacer': '\\1ЪЕ', 're': True},
+    {'find_what': f'([{CYR_CONSONANTS_HARD}])й[Ee]', 'replacer': '\\1ъе', 're': True},
     # ya, yo, yu
     {'find_what': 'Й[Аа]', 'replacer': 'Я', 're': True},
     {'find_what': 'й[Аа]', 'replacer': 'я', 're': True},
@@ -238,7 +270,11 @@ _lat2cyr = [
     {'find_what': 'й[Оо]', 'replacer': 'ё', 're': True},
     {'find_what': 'Й[Уу]', 'replacer': 'Ю', 're': True},
     {'find_what': 'й[Уу]', 'replacer': 'ю', 're': True},
-    # todo: introduce Ъ when appropriate
+]
+
+_lat2cyr_special_cases = [
+    {'find_what': 'раён', 'replacer': 'район'},
+    {'find_what': 'РАЁН', 'replacer': 'РАЙОН'},
 ]
 
 
@@ -264,13 +300,9 @@ def cyr2lat(text, joint_acute=True, first_e_with_hacek=True, soft_l_after_vowels
 
 def lat2cyr(text, joint_acute=True, first_e_with_hacek=True, soft_l_after_vowels=True):
     # todo: support all the optional settings
-    return transliterate_with_rules(text, _lat2cyr)
-
-
-CYR_CHARS = 'абвгдеёжзиклмнопрстуфхцчшщъыьэюя'
-BASIC_LAT_CHARS = 'abcdefghijklmnopqrtuvwxyz'
-ACCENT_LAT_CHARS = 'ěäüöśźćńŕťďĺ'
-LAT_CHARS = BASIC_LAT_CHARS + ACCENT_LAT_CHARS
+    text = transliterate_with_rules(text, _lat2cyr)
+    text = transliterate_with_rules(text, _lat2cyr_special_cases)
+    return text
 
 
 def detect_script(text: str, min_prevalence: float = 2.0, min_detectable: float = 0.1) -> str:
