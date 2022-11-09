@@ -138,10 +138,26 @@ _cyr2lat_first_e = [
     {'find_what': '\\bě', 'replacer': 'e', 're': True},
 ]
 
+_lat2cyr_first_e = [
+    {'find_what': '\\bE', 'replacer': 'Ě', 're': True},
+    {'find_what': '\\be', 'replacer': 'ě', 're': True},
+]
+
 _cyr2lat_soft_l_after_vowels = [
     # joint acutes | disjoint acutes
     {'find_what': '([iěeIĚE])(Ĺ|Ĺ)', 'replacer': '\\1L', 're': True},
     {'find_what': '([iěeIĚE])(ĺ|ĺ)', 'replacer': '\\1l', 're': True},
+]
+
+_lat2cyr_soft_l_after_vowels = [
+    # add the soft sign, but only if the next letter is not softening
+    {'find_what': '([иэеИЭЕ])(Л)\\b', 'replacer': '\\1Ль', 're': True},
+    {'find_what': '([иэеИЭЕ])(л)\\b', 'replacer': '\\1ль', 're': True},
+    {'find_what': '([иэеИЭЕ])(Л)([^ьъиеюяю])', 'replacer': '\\1ЛЬ\\3', 're': True},
+    {'find_what': '([иэеИЭЕ])(л)([^ьъиеюяю])', 'replacer': '\\1ль\\3', 're': True},
+    # special cases when L is still hard
+    # todo: fix all the exclusions from the list in https://t.me/ravo_club/9776
+    {'find_what': '([иэеИЭЕ][Лл])([Ьь])(ГАД|ГАВТ|гад|гавт)', 'replacer': '\\1\\3', 're': True},
 ]
 
 _lat2cyr = [
@@ -299,8 +315,11 @@ def cyr2lat(text, joint_acute=True, first_e_with_hacek=True, soft_l_after_vowels
 
 
 def lat2cyr(text, joint_acute=True, first_e_with_hacek=True, soft_l_after_vowels=True):
-    # todo: support all the optional settings
+    if not first_e_with_hacek:
+        text = transliterate_with_rules(text, _lat2cyr_first_e)
     text = transliterate_with_rules(text, _lat2cyr)
+    if not soft_l_after_vowels:
+        text = transliterate_with_rules(text, _lat2cyr_soft_l_after_vowels)
     text = transliterate_with_rules(text, _lat2cyr_special_cases)
     return text
 

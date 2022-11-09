@@ -53,6 +53,23 @@ def test_consistency():
         line_cyr2 = lat2cyr(line_lat)
         assert line_cyr == line_cyr2
 
+    for line_cyr in lines:
+        line_lat = cyr2lat(line_cyr, joint_acute=False)
+        line_cyr2 = lat2cyr(line_lat, joint_acute=False)
+        assert line_cyr == line_cyr2
+
+    for line_cyr in lines:
+        line_lat = cyr2lat(line_cyr, soft_l_after_vowels=False)
+        line_cyr2 = lat2cyr(line_lat, soft_l_after_vowels=False)
+        assert line_cyr == line_cyr2
+
+    for line_cyr in lines:
+        if ' ежос' in line_cyr:  # normally, this does not happen in the Erzya language
+            continue
+        line_lat = cyr2lat(line_cyr, first_e_with_hacek=False)
+        line_cyr2 = lat2cyr(line_lat, first_e_with_hacek=False)
+        assert line_cyr == line_cyr2
+
 
 def test_zontik():
     with open('examples/zontik_cyr.txt', 'r') as f:
